@@ -118,7 +118,7 @@ export default {
         return;
       }
       this.$refs.environmentEdit._save(newEnvironment);
-      this.environments.push(newEnvironment);
+      this.environments.unshift(newEnvironment);
       this.$refs.environmentItems.itemSelected(this.environments.length - 1, newEnvironment);
     },
     validateEnvironment(environment) {
