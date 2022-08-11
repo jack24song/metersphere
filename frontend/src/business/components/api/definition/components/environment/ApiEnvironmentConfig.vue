@@ -67,7 +67,8 @@ export default {
       selectEnvironmentId: '',
       ifCreate: false, //是否是创建环境
       delDialogVisible: false,
-      currentIndex: -1
+      currentIndex: -1,
+      isCopy: false
     }
   },
   computed: {
@@ -103,6 +104,7 @@ export default {
     },
     copyEnvironment(environment) {
       this.ifCreate = false;
+      this.isCopy = true;
       this.currentEnvironment = environment;
       if (!environment.id) {
         this.$warning(this.$t('commons.please_save'));
@@ -179,9 +181,12 @@ export default {
     },
     close() {
       this.$emit('close');
-      this.visible = false;
+      if (!this.isCopy) {
+        this.visible = false;
+      }
       this.$refs.environmentEdit.clearValidate();
       removeGoBackListener(this.close);
+      this.isCopy = false;
     },
     openDelEnv(environment, index) {
       this.currentEnvironment = environment;
