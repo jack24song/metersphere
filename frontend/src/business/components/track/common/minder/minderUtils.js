@@ -454,6 +454,39 @@ export function tagBatch(distinctTags) {
   });
 }
 
+/**
+ *  测试计划和评审支持给用例打标签-可以批量标签，批量标签仅适用于用例状态标签，其他标签不可更改
+ * @param distinctTags
+ */
+export function tagPlanBatch(distinctTags) {
+  listenBeforeExecCommand((even) => {
+    let minder = window.minder;
+    let selectNodes = window.minder.getSelectedNodes();
+    let args = even.commandArgs;
+    if (selectNodes) {
+      selectNodes.forEach((node) => {
+        if (args && args.length > 0) {
+          let origin = args[0];
+          if (origin && origin.length > 0) {
+            let resourceName = origin[0];
+              if (node.data.type === 'node' && even.commandName === 'resource') {
+                tagChildren(node, resourceName, distinctTags);
+                let modifyTopNode = modifyParentNodeTag(node, resourceName);
+                if (modifyTopNode) {
+                  modifyTopNode.renderTree();
+                } else {
+                  node.renderTree();
+                }
+                minder.layout(600);
+              }
+            }
+          }
+
+      });
+    }
+  });
+}
+
 export function isModuleNodeData(data) {
   let resource = data ? data.resource : null;
   return data.type === 'node' || (resource && resource.indexOf(i18n.t('test_track.module.module')) > -1);
@@ -487,6 +520,47 @@ export function tagEditCheck(resourceName) {
   }
   return true;
 }
+
+
+export function tagPlanEditCheck(resourceName) {
+  let minder = window.minder;
+  let selectNodes = minder.getSelectedNodes();
+  if (selectNodes && selectNodes.length > 0) {
+    let type = selectNodes[0].data.type;
+    if (type === 'node') {// 已存在的模块和用例不能修改标签
+      return false;
+    }
+
+    if(type === 'case' && resourceName === i18n.t('test_track.plan_view.pass') ){
+      return true;
+    }
+
+    if(type === 'case' && resourceName === i18n.t('test_track.plan_view.failure') ){
+      return true;
+    }
+
+    if(type === 'case' && resourceName === i18n.t('test_track.plan_view.blocking') ){
+      return true;
+    }
+
+    if(type === 'case' && resourceName === i18n.t('test_track.plan_view.skip') ){
+      return true;
+    }
+
+    let parentIsModuleNode = isModuleNode(selectNodes[0].getParent());
+    if (resourceName === i18n.t('api_test.definition.request.case') && !parentIsModuleNode) {
+      return false;
+    }
+    // 父节点必须是模块
+    if (resourceName === i18n.t('test_track.module.module') && !parentIsModuleNode) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+
 
 // 打了用例标签才能选择优先级
 export function priorityDisableCheck() {

@@ -31,7 +31,7 @@ name: "TestReviewMinder",
   data() {
     return{
       dataMap: new Map(),
-      tags: [this.$t('test_track.plan_view.pass'), this.$t('test_track.plan_view.not_pass')],
+      tags: [this.$t('test_track.plan_view.pass'), this.$t('test_track.plan_view.not_pass'),this.$t('api_test.definition.request.case'), this.$t('test_track.case.prerequisite'), this.$t('commons.remark'), this.$t('test_track.module.module')],
       result: {loading: false}
     }
   },

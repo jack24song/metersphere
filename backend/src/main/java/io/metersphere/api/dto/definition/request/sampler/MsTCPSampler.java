@@ -38,7 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.config.ConfigTestElement;
 import org.apache.jmeter.modifiers.UserParameters;
-import org.apache.jmeter.protocol.tcp.sampler.MsTCPClientImpl;
+//import org.apache.jmeter.protocol.tcp.sampler.MsTCPClientImpl;
 import org.apache.jmeter.protocol.tcp.sampler.TCPSampler;
 import org.apache.jmeter.save.SaveService;
 import org.apache.jmeter.testelement.TestElement;
@@ -299,10 +299,10 @@ public class MsTCPSampler extends MsTestElement {
         } else {
             tcpSampler.setClassname(this.getClassname());
         }
-        if (StringUtils.equals("TCPClientImpl", this.getClassname())) {
-            tcpSampler.setClassname(MsTCPClientImpl.class.getCanonicalName());
-        }
-        tcpSampler.setCharset(this.getConnectEncoding());
+//        if (StringUtils.equals("TCPClientImpl", this.getClassname())) {
+//            tcpSampler.setClassname(MsTCPClientImpl.class.getCanonicalName());
+//        }
+//        tcpSampler.setCharset(this.getConnectEncoding());
         tcpSampler.setServer(this.getServer());
         tcpSampler.setPort(this.getPort());
         tcpSampler.setConnectTimeout(this.getCtimeout());
