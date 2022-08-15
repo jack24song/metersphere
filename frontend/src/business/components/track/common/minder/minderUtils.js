@@ -469,17 +469,21 @@ export function tagPlanBatch(distinctTags) {
           let origin = args[0];
           if (origin && origin.length > 0) {
             let resourceName = origin[0];
-              if (node.data.type === 'node' && even.commandName === 'resource') {
-                tagChildren(node, resourceName, distinctTags);
-                let modifyTopNode = modifyParentNodeTag(node, resourceName);
-                if (modifyTopNode) {
-                  modifyTopNode.renderTree();
-                } else {
-                  node.renderTree();
-                }
-                minder.layout(600);
+            if (node.data.type === 'node' && even.commandName === 'resource') {
+              tagChildren(node, resourceName, distinctTags);
+              let modifyTopNode = modifyParentNodeTag(node, resourceName);
+              if (modifyTopNode) {
+                modifyTopNode.renderTree();
+              } else {
+                node.renderTree();
               }
+              minder.layout(600);
             }
+            // else if (node.data.type === 'case' && even.commandName === 'resource') {
+            //   node.data.resource.push(this.$t('api_test.definition.request.case'));
+            //   console.log("ddddd");
+            // }
+          }
           }
 
       });
@@ -531,20 +535,24 @@ export function tagPlanEditCheck(resourceName) {
       return false;
     }
 
-    if(type === 'case' && resourceName === i18n.t('test_track.plan_view.pass') ){
-      return true;
+    // if(type === 'case'){
+    //   selectNodes[0].data.resource.push(this.$t('api_test.definition.request.case'))
+    // }
+
+    if(type === 'case' && resourceName === i18n.t('api_test.definition.request.case') ){
+      return false;
     }
 
-    if(type === 'case' && resourceName === i18n.t('test_track.plan_view.failure') ){
-      return true;
+    if(type === 'case' && resourceName === i18n.t('test_track.case.prerequisite') ){
+      return false;
     }
 
-    if(type === 'case' && resourceName === i18n.t('test_track.plan_view.blocking') ){
-      return true;
+    if(type === 'case' && resourceName === i18n.t('commons.remark') ){
+      return false;
     }
 
-    if(type === 'case' && resourceName === i18n.t('test_track.plan_view.skip') ){
-      return true;
+    if(type === 'case' && resourceName === i18n.t('test_track.module.module') ){
+      return false;
     }
 
     let parentIsModuleNode = isModuleNode(selectNodes[0].getParent());
@@ -555,6 +563,23 @@ export function tagPlanEditCheck(resourceName) {
     if (resourceName === i18n.t('test_track.module.module') && !parentIsModuleNode) {
       return false;
     }
+
+    if (resourceName === i18n.t('test_track.plan_view.pass') && !parentIsModuleNode) {
+      return false;
+    }
+
+    if (resourceName === i18n.t('test_track.plan_view.skip') && !parentIsModuleNode) {
+      return false;
+    }
+
+    if (resourceName === i18n.t('test_track.plan_view.failure') && !parentIsModuleNode) {
+      return false;
+    }
+
+    if (resourceName === i18n.t('test_track.plan_view.blocking') && !parentIsModuleNode) {
+      return false;
+    }
+
   }
   return true;
 }

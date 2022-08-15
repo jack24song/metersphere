@@ -8,6 +8,8 @@
       :tags="tags"
       :disabled="disableMinder"
       :tag-edit-check="tagPlanEditCheck()"
+      :tag-enable="true"
+      :priority-disable-check="priorityDisableCheck()"
       :select-node="selectNode"
       :distinct-tags="[...tags, this.$t('test_track.plan.plan_status_prepare')]"
       :ignore-num="true"
@@ -47,7 +49,7 @@ import MsModuleMinder from "@/business/components/common/components/MsModuleMind
 import {getNodePath, getUUID, hasPermission} from "@/common/js/utils";
 import {
   getChildNodeId,handleAfterSave,isCaseNodeData,isModuleNodeData,
-  isModuleNode,handTestCaeEdit,tagPlanEditCheck,
+  isModuleNode,handTestCaeEdit,tagPlanEditCheck,priorityDisableCheck,
   handleExpandToLevel, listenBeforeExecCommand, listenNodeSelected, loadSelectNodes,
   tagPlanBatch, getSelectedNodeData, handleIssueAdd, handleIssueBatch, listenDblclick, handleMinderIssueDelete
 } from "@/business/components/track/common/minder/minderUtils";
@@ -226,6 +228,7 @@ name: "TestPlanMinder",
       } else {
         data.resource.push(this.$t('test_track.plan.plan_status_prepare'));
       }
+      data.caseId = item.caseId;
     },
 
 
@@ -643,7 +646,9 @@ name: "TestPlanMinder",
 
     },
 
-
+    priorityDisableCheck() {
+      return priorityDisableCheck;
+    },
     getCurCaseId() {
       return getSelectedNodeData().caseId;
     },
