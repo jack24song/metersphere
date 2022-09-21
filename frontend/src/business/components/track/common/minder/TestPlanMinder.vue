@@ -103,7 +103,7 @@ name: "TestPlanMinder",
       return this.$store.state.testPlanViewSelectNode;
     },
     moduleOptions() {
-      return this.$store.state.testCaseModuleOptions;
+      return this.$store.state.testPlanModuleOptions;
     },
     testCaseDefaultValue() {
       return this.$store.state.testCaseDefaultValue;
@@ -256,6 +256,7 @@ name: "TestPlanMinder",
       this.saveModuleNodeMap = new Map();
       this.buildSaveParam(window.minder.getRoot());
 
+
       this.saveModules.forEach(module => {
         let nodeIds = [];
         getChildNodeId(this.saveModuleNodeMap.get(module.id), nodeIds);
@@ -294,12 +295,19 @@ name: "TestPlanMinder",
         if (callback && callback instanceof Function) {
           callback();
         }
-
+        let newCase = [];
+        let updateCases =[];
         // 核对检查savecases 中的所有case, 有isEdit false 表示新增，需要单独配置关联
-        let newCase = this.saveCases.filter(item => (item.isEdit === false));
+        newCase = this.saveCases.filter(item => (item.isEdit === false));
+        // 核对检查需要update status 的case, isEdit true 和 tag 修改标签同时满足的, update 关联的状态
+        updateCases = this.saveCases.filter(item => (item.isEdit === true));
 
         if(newCase.length > 0){
           this.relevance(newCase);
+        }
+
+        if(updateCases.length > 0){
+          this.updateStatus(updateCases);
         }
 
       });
@@ -446,9 +454,10 @@ name: "TestPlanMinder",
 
       let testCase = {
         id: data.caseId,
+        planCaseId:data.id,
         name: data.text,
         nodeId: nodeId,
-        nodePath: getNodePath(nodeId, this.moduleOptions),
+        nodePath: this.getPlanNodePath(nodeId, this.moduleOptions),
         type: data.type ? data.type : 'functional',
         method: data.method ? data.method : 'manual',
         maintainer: this.testCaseDefaultValue['责任人'] ? this.testCaseDefaultValue['责任人'] : data.maintainer,
@@ -547,7 +556,7 @@ name: "TestPlanMinder",
           }
         }
 
-        if (data.resource.length > 1) {
+        if (data.resource.length > 0) {
           if (data.resource.indexOf(this.$t('test_track.plan_view.failure')) > -1) {
             testCase.status = 'Failure';
           } else if (data.resource.indexOf(this.$t('test_track.plan_view.pass')) > -1) {
@@ -556,6 +565,8 @@ name: "TestPlanMinder",
             testCase.status = 'Blocking';
           } else if (data.resource.indexOf(this.$t('test_track.plan_view.skip')) > -1) {
             testCase.status = 'Skip';
+          }else if (data.resource.indexOf(this.$t('test_track.plan.plan_status_prepare')) > -1){
+            testCase.status = 'Prepare';
           }
         }
 
@@ -564,6 +575,7 @@ name: "TestPlanMinder",
         } else {
           testCase.isEdit = false; // 新增
           testCase.id = getUUID();
+          testCase.planCaseId = getUUID();
           data.newId = testCase.id;
         }
         this.saveCases.push(testCase);
@@ -644,6 +656,30 @@ name: "TestPlanMinder",
 
       });
 
+    },
+
+    updateStatus(editCases){
+      // 将新键的用例关联测试计划planId和状态
+      let editParam = [];
+      this.buildUpdateParam(editCases,editParam);
+      this.result = this.$post('/test/plan/case/minder/edit', editParam, () => {
+
+      });
+    },
+    buildUpdateParam(editCases, param){
+      editCases.forEach(item =>{
+          param.push({id: item.planCaseId, status: item.status});
+        }
+      )
+    },
+
+    getPlanNodePath(nodeId, moduleInfo){
+      for (let i = 0; i < moduleInfo.length; i++) {
+        let item = moduleInfo[i];
+        if (nodeId === item.id) {
+          return item.path;
+        }
+      }
     },
 
     priorityDisableCheck() {

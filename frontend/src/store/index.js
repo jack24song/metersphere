@@ -17,6 +17,7 @@ const state = {
   testCaseSelectNode: {},
   testCaseSelectNodeIds: [],
   testCaseModuleOptions: [],
+  testPlanModuleOptions: [],
 
   testReviewSelectNode: {},
   testReviewSelectNodeIds: [],

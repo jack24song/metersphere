@@ -59,6 +59,8 @@
 </template>
 
 <script>
+import {buildNodePath} from "@/business/components/api/definition/model/NodeTree";
+
 import NodeTree from "../../../../common/NodeTree";
 import MsTestPlanCommonComponent from "../base/TestPlanCommonComponent";
 import FunctionalTestCaseList from "./FunctionalTestCaseList";
@@ -80,7 +82,7 @@ export default {
     MsTabButton,
     FunctionalTestCaseList,
     MsTestPlanCommonComponent,
-    NodeTree,
+    NodeTree
   },
   data() {
     return {
@@ -104,6 +106,7 @@ export default {
   ],
   mounted() {
     this.initData();
+
   },
   computed: {
     projectId() {
@@ -139,6 +142,7 @@ export default {
     },
     initData() {
       this.getNodeTreeByPlanId();
+
     },
     openTestCaseRelevanceDialog() {
       this.$refs.testCaseRelevance.open();
@@ -162,10 +166,14 @@ export default {
         this.result = this.$get(url, response => {
           this.treeNodes = response.data;
           this.setCurrentKey();
+          this.setModuleOptions();
         });
       }
     },
     setCurrentKey() {
+      // if (this.$refs.testPlanNodeTree) {
+      //   this.$refs.testPlanNodeTree.setCurrentKey(this.currentNode);
+      // }
       if (this.$refs.nodeTree) {
         this.$refs.nodeTree.setCurrentKey(this.currentNode);
       }
@@ -203,6 +211,13 @@ export default {
       } else {
         return true;
       }
+    },
+    setModuleOptions() {
+      let moduleOptions = [];
+      this.treeNodes.forEach(node => {
+        buildNodePath(node, {path: ''}, moduleOptions);
+      });
+      this.$store.commit('setTestPlanModuleOptions', moduleOptions);
     }
   }
 };

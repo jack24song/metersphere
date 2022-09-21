@@ -478,11 +478,9 @@ export function tagPlanBatch(distinctTags) {
                 node.renderTree();
               }
               minder.layout(600);
+            }else if (node.data.type === 'case' && even.commandName === 'resource') {
+              node.data.resource.push(resourceName);
             }
-            // else if (node.data.type === 'case' && even.commandName === 'resource') {
-            //   node.data.resource.push(this.$t('api_test.definition.request.case'));
-            //   console.log("ddddd");
-            // }
           }
           }
 
